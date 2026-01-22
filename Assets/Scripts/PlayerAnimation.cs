@@ -16,7 +16,7 @@ public class PlayerAnimation : MonoBehaviour
         
         bool running = Input.GetKey(KeyCode.LeftShift);
 
-
+        
         animator.SetBool("WalkForward",(Input.GetKey(KeyCode.W)));
         animator.SetBool("WalkBackward",(Input.GetKey(KeyCode.S)));
         animator.SetBool("WalkLeft", (Input.GetKey(KeyCode.A)));
@@ -27,20 +27,17 @@ public class PlayerAnimation : MonoBehaviour
         
 
     }
-    public void HandleJump(bool flag){
-            animator.SetBool("Jump", flag);
+    public void HandleJump(){
+            animator.SetTrigger("Jump");
     }
 
-        public void HandleBlock(){
-        
-            animator.SetTrigger("Block");
+        public void HandleBlock(bool flag){
+            animator.SetBool("Block", flag);
     }
 
     public void HandleDodge(){   
         if(Input.GetKeyDown(KeyCode.Tab)){
             animator.SetTrigger("Dive");
-        }else if(Input.GetKeyDown(KeyCode.UpArrow)){
-            animator.SetTrigger("DodgeForward");
         }
     }
 
@@ -57,27 +54,17 @@ public class PlayerAnimation : MonoBehaviour
             animator.SetTrigger("HeadAttack");
             break;
 
-            case 1.1:
-            animator.SetTrigger("LeftHandAttack");
-            break;
-
-            case 1.2:
-            animator.SetTrigger("RightHandAttack");
-            break;
-
             case 2.0:
+            animator.SetTrigger("HandsAttack");
+            break;
+
+            case 3.0:
             animator.SetTrigger("BellyAttack");
             break;
-
-            case 2.1:
-            animator.SetTrigger("LeftLegAttack");
+  
+            case 4.0:
+            animator.SetTrigger("LegsAttack");
             break;
-
-            case 2.2:
-            animator.SetTrigger("RightLegAttack");
-            break;
-
-           
 
             default:
             break;

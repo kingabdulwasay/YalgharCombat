@@ -30,7 +30,8 @@ public class EnemyAI : MonoBehaviour
 
     void Update(){
         float distance = Vector3.Distance(transform.position, player.position);
-        
+        agent.updateRotation = true;
+  
         if(distance <= attackRange){
             agent.ResetPath();
              animator.SetBool("Run", false);
@@ -78,11 +79,12 @@ public class EnemyAI : MonoBehaviour
 
                 if(hit.GetComponent<PlayerCombat>().isBlocking){
                     Debug.Log("Blocked");
-                }
+                }else{
                 Debug.Log(hit.name);
                 GameObject splash = Instantiate(bloodSplash, closestPoint, Quaternion.identity);
                 Destroy(splash, 3f);
                 hit.GetComponent<PlayerAnimation>().DamageAnimation();
+                }
             }
         }
     }

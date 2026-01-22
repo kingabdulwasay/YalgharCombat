@@ -5,7 +5,7 @@ public class PlayerCombat : MonoBehaviour
     public LayerMask enemyLayer;
     public float attackRange = .5f;
     public Transform attackPoint;
-
+    private Vector3 bleedingPoint;
     Vector3 origin;
     Vector3 dir;
     public float rotationSpeed = 10f;  
@@ -15,6 +15,13 @@ public class PlayerCombat : MonoBehaviour
     float lastAttackTime;
     public float coolDownTime = 1.1f;
     public GameObject bloodSplash;
+    public GameObject sword;
+    public GameObject bow;
+
+    void Start(){
+        sword.SetActive(true);
+        bow.SetActive(false);
+    }
 
     void Update()
     {
@@ -39,6 +46,8 @@ public class PlayerCombat : MonoBehaviour
             if (Physics.Raycast(origin, dir, out hit, 20f, enemyLayer)){
                 float distance = Vector3.Distance(transform.position, hit.point);
                 if(distance < 1.5f){
+                    bow.SetActive(false);
+                    sword.SetActive(true);
                     FacePlayerToHit();
                     if(hit.collider.name == "Head"){
                     GetComponent<PlayerAnimation>().AttackAnimation(1.0);
@@ -54,9 +63,13 @@ public class PlayerCombat : MonoBehaviour
                     GetComponent<PlayerAnimation>().AttackAnimation(2.2);
                     }
             }else{
+                    bow.SetActive(true);
+                    sword.SetActive(false);
                     Vector3 closestPoint = hit.collider.ClosestPoint(attackPoint.position);
+                    bleedingPoint = closestPoint;
+                    Debug.Log($"Closest Point: x={closestPoint.x}, y={closestPoint.y}, z={closestPoint.z}");
                     GetComponent<PlayerAnimation>().AttackAnimation(0);
-                    Instantiate(bloodSplash, closestPoint, Quaternion.identity);
+                    // Instantiate(bloodSplash, closestPoint, Quaternion.identity);
                 }
                   
         }
@@ -83,13 +96,11 @@ public class PlayerCombat : MonoBehaviour
     }
 
     void Block(){
-         if(Input.GetKey(KeyCode.B)){
-            if(!isBlocking){
-            GetComponent<PlayerAnimation>().HandleBlock();
-            isBlocking = true;
-            }
-        }else{
-            isBlocking = false;
+        if(Input.GetKeyDown(KeyCode.B)){   
+            isBlocking = !isBlocking;
+        } 
+         if(Input.GetKey(KeyCode.B)){   
+            GetComponent<PlayerAnimation>().HandleBlock(isBlocking);        
         }
     }
 
@@ -98,6 +109,10 @@ public class PlayerCombat : MonoBehaviour
             Debug.Log("Disabled");
     }
 
+    public void BleedingEvent(){
+            GameObject splash = Instantiate(bloodSplash, bleedingPoint, Quaternion.identity);
+            Destroy(splash, 3f);
+    }
     public void AttackEvent(){
         if(Time.time - lastAttackTime > coolDownTime){
             lastAttackTime = Time.time;  
@@ -111,7 +126,8 @@ public class PlayerCombat : MonoBehaviour
     }
 
     public void HeavyAttackEvent(){
-            Debug.Log("Deadly Attack");
+             bow.SetActive(false);
+            sword.SetActive(true);
             Collider[] hits = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayer);
             foreach(var hit in hits){
                 

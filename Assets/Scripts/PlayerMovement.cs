@@ -4,7 +4,7 @@ public class PlayerMovement : MonoBehaviour
 {
     public float speed = 5f;
     public float mouseSensitivity = 150f;
-    public float jumpForce = 2f;
+    public float jumpForce = 1f;
     public float gravity = -9.81f;
 
     public Transform cam;
@@ -55,14 +55,14 @@ public class PlayerMovement : MonoBehaviour
     {
         if (controller.isGrounded)
         {
-             GetComponent<PlayerAnimation>().HandleJump(false);
             if (yVelocity < 0)
                 yVelocity = -2f;
 
-            if (Input.GetButtonDown("Jump"))
+            if (Input.GetButtonDown("Jump")){
                 yVelocity = Mathf.Sqrt(jumpForce * -2f * gravity);
-        }else{
-            GetComponent<PlayerAnimation>().HandleJump(true);
+                GetComponent<PlayerAnimation>().HandleJump();
+
+            }
         }
 
         yVelocity += gravity * Time.deltaTime;
