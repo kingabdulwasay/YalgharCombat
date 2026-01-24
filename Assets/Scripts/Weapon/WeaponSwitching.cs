@@ -6,7 +6,7 @@ public class WeaponSwitching : MonoBehaviour
     public RawImage weaponImage;
     public GameObject[] weapons;
     public Texture[] weaponTextures;
-    GameObject activeWeapon;
+    public GameObject activeWeapon;
     public enum WeaponType{
         None,
         Ranged,
@@ -49,5 +49,14 @@ public class WeaponSwitching : MonoBehaviour
         activeWeapon = weapons[index];
         activeWeapon.SetActive(true);
         weaponImage.texture = weaponTextures[index];
+    }
+
+
+    public void DisableWeapon(){
+        activeWeapon.SetActive(false);
+    }
+
+    public void EnableWeapon(){
+        activeWeapon.SetActive(true);
     }
 }

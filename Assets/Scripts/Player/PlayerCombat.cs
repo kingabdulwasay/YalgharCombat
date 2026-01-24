@@ -18,6 +18,7 @@ public class PlayerCombat : MonoBehaviour
 
     public GameObject enabledCrosshair;
     public GameObject disabledCrosshair;
+    public Transform enemyPosition;
 
     public bool isAttacking;
 
@@ -30,7 +31,7 @@ public class PlayerCombat : MonoBehaviour
     void Update()
     {
         Attack();
-        Dodging();
+
         Block();
 
         
@@ -44,40 +45,27 @@ public class PlayerCombat : MonoBehaviour
             dir = cam.forward;
 
 
+                WeaponSwitching weaponSwitching = GetComponent<WeaponSwitching>();
+  if(Time.time - lastAttackTime > coolDownTime){
+            lastAttackTime = Time.time;  
             if (Physics.Raycast(origin, dir, out hit, 20f, enemyLayer)){
             
-                WeaponSwitching weaponSwitching = GetComponent<WeaponSwitching>();
                 float distance = Vector3.Distance(transform.position, hit.point);
-                if(distance < 1f){
+
+                if(distance < 1.5f){
+                    enemyPosition = hit.collider.transform;
                     bleedingPoint = hit.point;
                     FacePlayerToHit();
-                    if(weaponSwitching.currentType == WeaponSwitching.WeaponType.None){
-                        GetComponent<PlayerAnimation>().HandleRootMotion(true);
-                        GetComponent<CamSwitching>().FilmingwithAttacking();
-                        GetComponent<PlayerAnimation>().AttackAnimation(5.0);
-                    }else if (weaponSwitching.currentType == WeaponSwitching.WeaponType.Meele){
-                        GetComponent<PlayerAnimation>().HandleRootMotion(true);
-                        GetComponent<CamSwitching>().FilmingwithAttacking();
-                    if(hit.collider.name == "Head"){
-                    GetComponent<PlayerAnimation>().AttackAnimation(1.0);
-                        }else if(hit.collider.name == "Left Hand"){
-                    GetComponent<PlayerAnimation>().AttackAnimation(1.0);
-                        }else if(hit.collider.name == "Right Hand"){
-                    GetComponent<PlayerAnimation>().AttackAnimation(1.0);
-                        }else if(hit.collider.name == "Belly"){
-                    GetComponent<PlayerAnimation>().AttackAnimation(3.0);
-                        }else if(hit.collider.name == "Left Leg"){
-                    GetComponent<PlayerAnimation>().AttackAnimation(4.0);
-                        }else if(hit.collider.name == "Right Leg"){
-                    GetComponent<PlayerAnimation>().AttackAnimation(4.0);
-                    }else if(weaponSwitching.currentType == WeaponSwitching.WeaponType.Ranged){
-                        GetComponent<PlayerAnimation>().HandleRootMotion(true);
-                        GetComponent<CamSwitching>().FilmingwithAttacking();
-                        GetComponent<PlayerAnimation>().AttackAnimation(6.0);
+                   
+                if (weaponSwitching.currentType == WeaponSwitching.WeaponType.Meele){
+
+
+                     Debug.Log(hit.collider.name);
+
+                    if(hit.collider.name == "Belly") GetComponent<PlayerAnimation>().AttackAnimation(3.0);
+                     
                     }
-                    }
-              
-            }else{
+                }else{
                 Debug.Log("Current Weapon Type: " + weaponSwitching.currentType);
 
                 if(weaponSwitching.currentType == WeaponSwitching.WeaponType.Ranged){ 
@@ -88,11 +76,25 @@ public class PlayerCombat : MonoBehaviour
                 }
                   
         }
+              
+            }
 
     } 
+  }
     }
-    }
+    
 
+
+public void OnKnifeThrow(){
+    GetComponent<AudioManager>().ThrowKnife();
+    GetComponent<WeaponSwitching>().DisableWeapon();
+}
+
+public void OnKnifeHit(){
+    GetComponent<AudioManager>().Cut();
+    Bleeding();
+    GetComponent<WeaponSwitching>().EnableWeapon();
+}
      
 
 
@@ -121,9 +123,7 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
-    void Dodging(){
-            GetComponent<PlayerAnimation>().HandleDodge();
-    }
+
 
     void Block(){
         if(Input.GetKeyDown(KeyCode.B)){   
@@ -144,18 +144,22 @@ public class PlayerCombat : MonoBehaviour
             Destroy(splash, 3f);
     }
     public void AttackEvent(){
-        // if(Time.time - lastAttackTime > coolDownTime){
-        //     lastAttackTime = Time.time;  
-        //     Collider[] hits = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayer);
-        //     foreach(var hit in hits){
-        //         Vector3 closestPoint = hit.GetComponent<Collider>().ClosestPoint(attackPoint.position);
-        //         GameObject splash = Instantiate(bloodSplash, closestPoint, Quaternion.identity);
-        //         Destroy(splash, 3f);
-        //     }
-        // }
+       
+            // Collider[] hits = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayer);
+            // foreach(var hit in hits){
+            //     hit.GetComponent<EnemyAI>().GetHit();
+            //     Vector3 closestPoint = hit.GetComponent<Collider>().ClosestPoint(attackPoint.position);
+                // GameObject splash = Instantiate(bloodSplash, closestPoint, Quaternion.identity);
+                // Destroy(splash, 3f);
+            // }
+
+                float distance = Vector3.Distance(transform.position, enemyPosition.position);
+                Debug.Log(distance);
                 Bleeding();
+                GetComponent<AudioManager>().Damage();
                 GetComponent<PlayerAnimation>().HandleRootMotion(false);
                 GetComponent<CamSwitching>().FilmingwithoutAttacking();
+        
     }
 
     public void HeavyAttackEvent(){

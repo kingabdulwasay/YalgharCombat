@@ -40,6 +40,9 @@ public class PlayerAnimation : MonoBehaviour
     public void HandleDodge(){   
         if(Input.GetKeyDown(KeyCode.Tab)){
             animator.SetTrigger("Dive");
+        }else if(Input.GetKeyDown(KeyCode.Z)){
+            EnableRootMotionEvent();
+            animator.SetTrigger("Dodge");
         }
     }
 
@@ -50,31 +53,38 @@ public class PlayerAnimation : MonoBehaviour
     public void AttackAnimation(double currentAttack){
         switch(currentAttack){
             case 0:
+
             animator.SetTrigger("Throw");
             break;
             case 1.0:
+            HandleRootMotion(true);
+            GetComponent<CamSwitching>().FilmingwithAttacking();
             animator.SetTrigger("HandsHeadAttack");
             break;
 
             case 2.0:
+           HandleRootMotion(true);
+            GetComponent<CamSwitching>().FilmingwithAttacking();
             animator.SetTrigger("HandsAttack");
             break;
 
             case 3.0:
+            HandleRootMotion(true);
+            GetComponent<CamSwitching>().FilmingwithAttacking();
             animator.SetTrigger("BellyAttack");
             break;
   
             case 4.0:
+            HandleRootMotion(true);
+            GetComponent<CamSwitching>().FilmingwithAttacking();
             animator.SetTrigger("BottomAttack");
             break;
 
-            case 5.0:
-            animator.SetTrigger("punch");
-            break;
+            // case 5.0:
+            // animator.SetTrigger("punch");
+            // break;
 
-            case 6.0:
-            animator.SetTrigger("Stabb");
-            break;
+            
             
             default:
             break;
@@ -89,6 +99,12 @@ public class PlayerAnimation : MonoBehaviour
          animator.applyRootMotion = false;
          GetComponent<CamSwitching>().FilmingwithoutAttacking();
     }
+
+     public void EnableRootMotionEvent(){
+         animator.applyRootMotion = true;
+        //  GetComponent<CamSwitching>().FilmingwithAttacking();
+    }
+
 
     public void DamageAnimation(){
         animator.SetTrigger("Hit");

@@ -28,7 +28,9 @@ public class PlayerMovement : MonoBehaviour
 
         controller.Move(move * Time.deltaTime);
         GetComponent<PlayerAnimation>().MovementAnimations();
+        Dodging();
     }
+
 
 
     void HandleMouseLook()
@@ -67,6 +69,11 @@ public class PlayerMovement : MonoBehaviour
 
         yVelocity += gravity * Time.deltaTime;
         move.y = yVelocity;
+    }
+
+
+        void Dodging(){
+            GetComponent<PlayerAnimation>().HandleDodge();
     }
 
  

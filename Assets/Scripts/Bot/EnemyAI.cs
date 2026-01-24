@@ -35,8 +35,10 @@ public class EnemyAI : MonoBehaviour
         if(distance <= attackRange){
             agent.ResetPath();
              animator.SetBool("Run", false);
-
+             if(Time.time - lastAttackTime > coolDownTime){
+            lastAttackTime = Time.time;
             animator.SetTrigger("Attack");
+            }
 
         }else if(distance <= detectRange){
 
@@ -68,10 +70,12 @@ public class EnemyAI : MonoBehaviour
         isDisable = false;
     }
 
+    public void GetHit(){
+        animator.SetTrigger("Hit");
+    }
+
     void Attack(){
-        animator.SetBool("Run", false);
-        if(Time.time - lastAttackTime > coolDownTime){
-            lastAttackTime = Time.time;
+        
            
             Collider[] hits = Physics.OverlapSphere(attackPoint.position, attackPointRange, playerLayer);
             foreach(var hit in hits){
@@ -84,9 +88,10 @@ public class EnemyAI : MonoBehaviour
                 GameObject splash = Instantiate(bloodSplash, closestPoint, Quaternion.identity);
                 Destroy(splash, 3f);
                 hit.GetComponent<PlayerAnimation>().DamageAnimation();
+                hit.GetComponent<AudioManager>().Damage();
                 }
             }
-        }
+        
     }
 
         void OnDrawGizmosSelected(){
