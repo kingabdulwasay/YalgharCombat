@@ -4,6 +4,7 @@ public class PlayerAnimation : MonoBehaviour
 {
     Animator animator;
     // float currentAttack;
+
     public void Start()
     {
         // currentAttack = 0;
@@ -14,26 +15,33 @@ public class PlayerAnimation : MonoBehaviour
 
     public void MovementAnimations()
     {
-        
-        
-        bool running = Input.GetKey(KeyCode.LeftShift);
 
-        
+        bool running = Input.GetKey(KeyCode.LeftShift);
+        bool crouching = GetComponent<PlayerCombat>().isCrouching;
+
         animator.SetBool("WalkForward",(Input.GetKey(KeyCode.W)));
         animator.SetBool("WalkBackward",(Input.GetKey(KeyCode.S)));
         animator.SetBool("WalkLeft", (Input.GetKey(KeyCode.A)));
         animator.SetBool("WalkRight", (Input.GetKey(KeyCode.D)));
-        
+       // animator.SetBool("CrouchIdle", (Input.GetKey(KeyCode.C)));
         animator.SetBool("RunForward",running);
- 
-        
 
+        animator.SetBool("CrouchForward", (Input.GetKey(KeyCode.W) && crouching));
+        animator.SetBool("CrouchBackward", (Input.GetKey(KeyCode.S) && crouching));
+        animator.SetBool("CrouchLeft", (Input.GetKey(KeyCode.A) && crouching));
+        animator.SetBool("CrouchRight", (Input.GetKey(KeyCode.D) && crouching));
     }
     public void HandleJump(){
             animator.SetTrigger("Jump");
     }
 
-        public void HandleBlock(bool flag){
+    public void HandleCrouch(bool flag)
+    {
+        animator.SetBool("CrouchIdle", flag);
+    }
+
+
+    public void HandleBlock(bool flag){
             animator.SetBool("Block", flag);
     }
 
@@ -84,8 +92,13 @@ public class PlayerAnimation : MonoBehaviour
             // animator.SetTrigger("punch");
             // break;
 
-            
-            
+            case 6.0:
+            HandleRootMotion(true);
+            GetComponent<CamSwitching>().FilmingwithAttacking();
+            animator.SetTrigger("Legs");
+            break;
+
+
             default:
             break;
         }
@@ -115,5 +128,6 @@ public class PlayerAnimation : MonoBehaviour
         animator.SetBool("RunForward", false);
         animator.SetBool("WalkBackward", false);
         animator.SetBool("RunBackward", false);
+        
     }
 }

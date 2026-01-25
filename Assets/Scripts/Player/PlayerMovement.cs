@@ -29,6 +29,7 @@ public class PlayerMovement : MonoBehaviour
         controller.Move(move * Time.deltaTime);
         GetComponent<PlayerAnimation>().MovementAnimations();
         Dodging();
+
     }
 
 
@@ -50,7 +51,13 @@ public class PlayerMovement : MonoBehaviour
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
-        return (transform.right * x + transform.forward * z) * speed;
+        float currentSpeed = speed;
+        if (GetComponent<PlayerCombat>().isCrouching)
+        {
+            currentSpeed = speed * 0.5f; 
+        }
+
+        return (transform.right * x + transform.forward * z) * currentSpeed;
     }
 
     void HandleJumpAndGravity(ref Vector3 move)
@@ -75,6 +82,5 @@ public class PlayerMovement : MonoBehaviour
         void Dodging(){
             GetComponent<PlayerAnimation>().HandleDodge();
     }
-
  
 }

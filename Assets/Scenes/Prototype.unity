@@ -147,7 +147,7 @@ Transform:
   m_GameObject: {fileID: 4795896}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.199, z: 0}
+  m_LocalPosition: {x: 0, y: 0.15, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -510,7 +510,7 @@ Transform:
   m_GameObject: {fileID: 332776216}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.47, z: 0}
+  m_LocalPosition: {x: -0.038, y: -0.47, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -732,7 +732,7 @@ Transform:
   m_GameObject: {fileID: 720041533}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.627, z: 0}
+  m_LocalPosition: {x: 0.06, y: 0.541, z: 0.218}
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2462,8 +2462,6 @@ GameObject:
   - component: {fileID: 1853267829}
   - component: {fileID: 1853267835}
   - component: {fileID: 1853267834}
-  - component: {fileID: 1853267836}
-  - component: {fileID: 1853267837}
   m_Layer: 6
   m_Name: Enemy
   m_TagString: Untagged
@@ -2506,7 +2504,7 @@ MeshRenderer:
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
-  m_MotionVectors: 1
+  m_MotionVectors: 2
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
@@ -2613,49 +2611,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &1853267836
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1853267828}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 928b91565c7e4ff48ac931b9db32d786, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  detectRange: 7
-  attackRange: 1
-  attackPoint: {fileID: 529464456}
-  attackPointRange: 0.5
-  coolDownTime: 2
-  playerLayer:
-    serializedVersion: 2
-    m_Bits: 128
-  bloodSplash: {fileID: 100002, guid: f63523b97f3ae744b80a1e6ff09a4759, type: 3}
---- !u!195 &1853267837
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1853267828}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.5
-  m_Speed: 3.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 2
-  m_BaseOffset: 1
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
 --- !u!1 &1862664494
 GameObject:
   m_ObjectHideFlags: 0
@@ -6936,7 +6891,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 998228c5c905f01469c29b2bddbd87b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 3
+  speed: 7
   mouseSensitivity: 150
   jumpForce: 1
   gravity: -9.81
@@ -9662,10 +9617,12 @@ MonoBehaviour:
   attackPoint: {fileID: 2870292622477688010}
   rotationSpeed: 10
   isBlocking: 0
+  isCrouching: 0
   coolDownTime: 1.1
   bloodSplash: {fileID: 100002, guid: f63523b97f3ae744b80a1e6ff09a4759, type: 3}
   enabledCrosshair: {fileID: 2008769653}
   disabledCrosshair: {fileID: 1335636924}
+  enemyPosition: {fileID: 0}
   isAttacking: 0
 --- !u!4 &8447082967122833645
 Transform:

@@ -11,6 +11,7 @@ public class PlayerCombat : MonoBehaviour
     public float rotationSpeed = 10f;  
     RaycastHit hit;
     public bool isBlocking = false;
+    public bool isCrouching = false;
 
     float lastAttackTime;
     public float coolDownTime = 1.1f;
@@ -34,58 +35,106 @@ public class PlayerCombat : MonoBehaviour
 
         Block();
 
+        Crouch();
         
     }
 
-    public void Attack(){
-        if(Input.GetButtonDown("Fire1")){
-           
+
+    public void Attack()
+    {
+        if (Input.GetButtonDown("Fire1"))
+        {
             Transform cam = GetComponent<PlayerMovement>().cam;
             origin = cam.position;
             dir = cam.forward;
 
+            WeaponSwitching weaponSwitching = GetComponent<WeaponSwitching>();
 
-                WeaponSwitching weaponSwitching = GetComponent<WeaponSwitching>();
-  if(Time.time - lastAttackTime > coolDownTime){
-            lastAttackTime = Time.time;  
-            if (Physics.Raycast(origin, dir, out hit, 20f, enemyLayer)){
-            
-                float distance = Vector3.Distance(transform.position, hit.point);
+            if (Time.time - lastAttackTime > coolDownTime)
+            {
+                lastAttackTime = Time.time;
 
-                if(distance < 1.5f){
-                    enemyPosition = hit.collider.transform;
-                    bleedingPoint = hit.point;
-                    FacePlayerToHit();
-                   
-                if (weaponSwitching.currentType == WeaponSwitching.WeaponType.Meele){
+                if (Physics.Raycast(origin, dir, out hit, 20f, enemyLayer))
+                {
+                    Debug.Log("===== RAYCAST HIT =====");
+                    Debug.Log("Hit Object Name: " + hit.collider.gameObject.name);
+                    Debug.Log("Hit Transform Name: " + hit.transform.name);
+                    Debug.Log("Hit Root Object: " + hit.transform.root.name);
+                    Debug.Log("Hit Tag: " + hit.collider.tag);
+                    Debug.Log("Hit Layer: " + LayerMask.LayerToName(hit.collider.gameObject.layer));
 
+                    float distance = Vector3.Distance(transform.position, hit.point);
+                    Debug.Log("Distance: " + distance);
+                    Debug.Log("Weapon Type: " + weaponSwitching.currentType);
 
-                     Debug.Log(hit.collider.name);
+                    if (distance < 1.5f)
+                    {
+                        enemyPosition = hit.collider.transform;
+                        bleedingPoint = hit.point;
+                        FacePlayerToHit();
 
-                    if(hit.collider.name == "Belly") GetComponent<PlayerAnimation>().AttackAnimation(3.0);
-                     
+                        if (weaponSwitching.currentType == WeaponSwitching.WeaponType.Meele)
+                        {
+                            string hitPart = hit.collider.gameObject.name;
+                            Debug.Log("Hit Part Used In Code: " + hitPart);
+                            if (isCrouching)
+                            {
+                                GetComponent<PlayerAnimation>().AttackAnimation(6.0);
+                            }
+
+                            else
+                            {
+                                if (hitPart == "Head")
+                                {
+                                    Debug.Log("HEAD ATTACK");
+                                    GetComponent<PlayerAnimation>().AttackAnimation(1.0);
+                                }
+                                else if (hitPart == "Belly")
+                                {
+                                    Debug.Log("BELLY ATTACK");
+                                    GetComponent<PlayerAnimation>().AttackAnimation(3.0);
+                                }
+                                else if (hitPart == "Legs")
+                                {
+                                    Debug.Log("LEGS ATTACK");
+                                    GetComponent<PlayerAnimation>().AttackAnimation(4.0);
+                                }
+                                else if (hitPart == "Right Hand" || hitPart == "Left Hand")
+                                {
+                                    Debug.Log("HAND ATTACK");
+                                    GetComponent<PlayerAnimation>().AttackAnimation(2.0);
+                                }
+                                else
+                                {
+                                    Debug.Log("NO MATCHING BODY PART FOUND");
+                                }
+                            }
+                        }
                     }
-                }else{
-                Debug.Log("Current Weapon Type: " + weaponSwitching.currentType);
-
-                if(weaponSwitching.currentType == WeaponSwitching.WeaponType.Ranged){ 
-                    Vector3 closestPoint = hit.collider.ClosestPoint(attackPoint.position);
-                    bleedingPoint = closestPoint;
-                    Debug.Log($"Closest Point: x={closestPoint.x}, y={closestPoint.y}, z={closestPoint.z}");
-                    GetComponent<PlayerAnimation>().AttackAnimation(0);
+                    else
+                    {
+                        if (weaponSwitching.currentType == WeaponSwitching.WeaponType.Ranged)
+                        {
+                            Vector3 closestPoint = hit.collider.ClosestPoint(attackPoint.position);
+                            bleedingPoint = closestPoint;
+                            Debug.Log("RANGED THROW");
+                            GetComponent<PlayerAnimation>().AttackAnimation(0);
+                        }
+                    }
                 }
-                  
-        }
-              
+                else
+                {
+                    Debug.Log("RAYCAST DID NOT HIT ENEMY");
+                }
             }
-
-    } 
-  }
+        }
     }
-    
 
 
-public void OnKnifeThrow(){
+
+
+
+    public void OnKnifeThrow(){
     GetComponent<AudioManager>().ThrowKnife();
     GetComponent<WeaponSwitching>().DisableWeapon();
 }
@@ -131,6 +180,18 @@ public void OnKnifeHit(){
         } 
          if(Input.GetKey(KeyCode.B)){   
             GetComponent<PlayerAnimation>().HandleBlock(isBlocking);        
+        }
+    }
+
+    void Crouch()
+    {
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            isCrouching = !isCrouching;
+        }
+        if (Input.GetKey(KeyCode.C))
+        {
+            GetComponent<PlayerAnimation>().HandleCrouch(isCrouching);
         }
     }
 
