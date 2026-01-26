@@ -45,13 +45,12 @@ public class PlayerAnimation : MonoBehaviour
             animator.SetBool("Block", flag);
     }
 
-    public void HandleDodge(){   
-        if(Input.GetKeyDown(KeyCode.Tab)){
-            animator.SetTrigger("Dive");
-        }else if(Input.GetKeyDown(KeyCode.Z)){
+    public void HandleDodge(string type){   
+
+            animator.SetTrigger(type);
+
             EnableRootMotionEvent();
-            animator.SetTrigger("Dodge");
-        }
+        
     }
 
    public void HandleRootMotion(bool flag){
@@ -65,26 +64,26 @@ public class PlayerAnimation : MonoBehaviour
             animator.SetTrigger("Throw");
             break;
             case 1.0:
-            HandleRootMotion(true);
-            GetComponent<CamSwitching>().FilmingwithAttacking();
-            animator.SetTrigger("HandsHeadAttack");
+            // HandleRootMotion(true);
+            // GetComponent<CamSwitching>().FilmingwithAttacking();
+            animator.SetTrigger("HeadAttack");
             break;
 
             case 2.0:
-           HandleRootMotion(true);
-            GetComponent<CamSwitching>().FilmingwithAttacking();
+        //    HandleRootMotion(true);
+        //     GetComponent<CamSwitching>().FilmingwithAttacking();
             animator.SetTrigger("HandsAttack");
             break;
 
             case 3.0:
-            HandleRootMotion(true);
-            GetComponent<CamSwitching>().FilmingwithAttacking();
+            // HandleRootMotion(true);
+            // GetComponent<CamSwitching>().FilmingwithAttacking();
             animator.SetTrigger("BellyAttack");
             break;
   
             case 4.0:
-            HandleRootMotion(true);
-            GetComponent<CamSwitching>().FilmingwithAttacking();
+            // HandleRootMotion(true);
+            // GetComponent<CamSwitching>().FilmingwithAttacking();
             animator.SetTrigger("BottomAttack");
             break;
 
@@ -93,8 +92,8 @@ public class PlayerAnimation : MonoBehaviour
             // break;
 
             case 6.0:
-            HandleRootMotion(true);
-            GetComponent<CamSwitching>().FilmingwithAttacking();
+            // HandleRootMotion(true);
+            // GetComponent<CamSwitching>().FilmingwithAttacking();
             animator.SetTrigger("Legs");
             break;
 

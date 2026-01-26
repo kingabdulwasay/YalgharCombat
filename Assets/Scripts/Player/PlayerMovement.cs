@@ -12,6 +12,7 @@ public class PlayerMovement : MonoBehaviour
     float xRotation = 0f;
     float yVelocity;
     CharacterController controller;
+    public bool isGrounded;
 
     void Start()
     {
@@ -28,8 +29,8 @@ public class PlayerMovement : MonoBehaviour
 
         controller.Move(move * Time.deltaTime);
         GetComponent<PlayerAnimation>().MovementAnimations();
-        Dodging();
-
+        isGrounded = controller.isGrounded;
+      
     }
 
 
@@ -79,8 +80,5 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-        void Dodging(){
-            GetComponent<PlayerAnimation>().HandleDodge();
-    }
  
 }

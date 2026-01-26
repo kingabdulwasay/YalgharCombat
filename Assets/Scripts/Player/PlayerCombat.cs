@@ -23,10 +23,17 @@ public class PlayerCombat : MonoBehaviour
 
     public bool isAttacking;
 
+    public string hitPart;
+
+    public bool isDodging;
+
+
+
     void Start(){
     disabledCrosshair.SetActive(false);
     enabledCrosshair.SetActive(true);
         isAttacking = false;
+        isDodging = false;
     }
 
     void Update()
@@ -36,6 +43,9 @@ public class PlayerCombat : MonoBehaviour
         Block();
 
         Crouch();
+
+        Dodge();
+
         
     }
 
@@ -50,10 +60,6 @@ public class PlayerCombat : MonoBehaviour
 
             WeaponSwitching weaponSwitching = GetComponent<WeaponSwitching>();
 
-            if (Time.time - lastAttackTime > coolDownTime)
-            {
-                lastAttackTime = Time.time;
-
                 if (Physics.Raycast(origin, dir, out hit, 20f, enemyLayer))
                 {
                     Debug.Log("===== RAYCAST HIT =====");
@@ -67,7 +73,7 @@ public class PlayerCombat : MonoBehaviour
                     Debug.Log("Distance: " + distance);
                     Debug.Log("Weapon Type: " + weaponSwitching.currentType);
 
-                    if (distance < 1.5f)
+                    if (distance <= 1.75f)
                     {
                         enemyPosition = hit.collider.transform;
                         bleedingPoint = hit.point;
@@ -75,29 +81,33 @@ public class PlayerCombat : MonoBehaviour
 
                         if (weaponSwitching.currentType == WeaponSwitching.WeaponType.Meele)
                         {
-                            string hitPart = hit.collider.gameObject.name;
+                            hitPart = hit.collider.gameObject.name;
                             Debug.Log("Hit Part Used In Code: " + hitPart);
                             if (isCrouching)
                             {
                                 GetComponent<PlayerAnimation>().AttackAnimation(6.0);
-                            }
-
-                            else
+                            }else
                             {
-                                if (hitPart == "Head")
+                  
+
+                                 if (hitPart == "Head")
                                 {
                                     Debug.Log("HEAD ATTACK");
                                     GetComponent<PlayerAnimation>().AttackAnimation(1.0);
+                                    hit.collider.GetComponentInParent<EnemyHealth>().TakeDamage(10f);
                                 }
                                 else if (hitPart == "Belly")
                                 {
                                     Debug.Log("BELLY ATTACK");
                                     GetComponent<PlayerAnimation>().AttackAnimation(3.0);
+                                    hit.collider.GetComponentInParent<EnemyHealth>().TakeDamage(5f);
+
                                 }
-                                else if (hitPart == "Legs")
+                                else if (hitPart == "Left Leg" || hitPart == "Right Leg")
                                 {
                                     Debug.Log("LEGS ATTACK");
                                     GetComponent<PlayerAnimation>().AttackAnimation(4.0);
+
                                 }
                                 else if (hitPart == "Right Hand" || hitPart == "Left Hand")
                                 {
@@ -108,6 +118,7 @@ public class PlayerCombat : MonoBehaviour
                                 {
                                     Debug.Log("NO MATCHING BODY PART FOUND");
                                 }
+                                
                             }
                         }
                     }
@@ -126,7 +137,7 @@ public class PlayerCombat : MonoBehaviour
                 {
                     Debug.Log("RAYCAST DID NOT HIT ENEMY");
                 }
-            }
+            
         }
     }
 
@@ -146,7 +157,10 @@ public void OnKnifeHit(){
 }
      
 
-
+public void ResetDodge(){
+    isDodging = false;
+    Debug.Log("Dodge and Dive Reset");
+}
 // void TempAttack(){
 //     if(Input.GetButtonDown("Fire1")){
 //         isAttacking = true;
@@ -208,16 +222,15 @@ public void OnKnifeHit(){
        
             // Collider[] hits = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayer);
             // foreach(var hit in hits){
-            //     hit.GetComponent<EnemyAI>().GetHit();
+            //     // hit.GetComponent<EnemyAI>().GetHit();
             //     Vector3 closestPoint = hit.GetComponent<Collider>().ClosestPoint(attackPoint.position);
-                // GameObject splash = Instantiate(bloodSplash, closestPoint, Quaternion.identity);
-                // Destroy(splash, 3f);
+            //     GameObject splash = Instantiate(bloodSplash, closestPoint, Quaternion.identity);
+            //     Destroy(splash, 3f);
+            //     GetComponent<AudioManager>().Damage();
             // }
-
                 float distance = Vector3.Distance(transform.position, enemyPosition.position);
                 Debug.Log(distance);
                 Bleeding();
-                GetComponent<AudioManager>().Damage();
                 GetComponent<PlayerAnimation>().HandleRootMotion(false);
                 GetComponent<CamSwitching>().FilmingwithoutAttacking();
         
@@ -235,7 +248,18 @@ public void OnKnifeHit(){
                 hit.GetComponent<EnemyAI>().Fall();
             }   
     }
-   
+          void Dodge(){
+            if(Input.GetKeyDown(KeyCode.Tab)){
+                GetComponent<PlayerAnimation>().HandleDodge("Dive");
+                isDodging  = true;
+                Debug.Log("Diving");
+            }else if (Input.GetKeyDown(KeyCode.Z)){
+                GetComponent<PlayerAnimation>().HandleDodge("Dodge");
+                isDodging  = true;
+                Debug.Log("Dodging");
+            }
+    }
+ 
 
     void OnDrawGizmosSelected(){
         if (attackPoint == null) return;

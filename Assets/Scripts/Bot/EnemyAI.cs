@@ -79,6 +79,7 @@ public class EnemyAI : MonoBehaviour
            
             Collider[] hits = Physics.OverlapSphere(attackPoint.position, attackPointRange, playerLayer);
             foreach(var hit in hits){
+                if(!hit.GetComponent<PlayerCombat>().isDodging){
                 Vector3 closestPoint = hit.GetComponent<Collider>().ClosestPoint(attackPoint.position);
 
                 if(hit.GetComponent<PlayerCombat>().isBlocking){
@@ -89,6 +90,10 @@ public class EnemyAI : MonoBehaviour
                 Destroy(splash, 3f);
                 hit.GetComponent<PlayerAnimation>().DamageAnimation();
                 hit.GetComponent<AudioManager>().Damage();
+                Debug.Log(hit.GetComponent<PlayerMovement>().isGrounded);
+                }
+                }else{
+                    Debug.Log("Cannot attack");
                 }
             }
         
