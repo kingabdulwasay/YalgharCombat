@@ -3,8 +3,6 @@ using UnityEngine;
 public class PlayerCombat : MonoBehaviour
 {
     public LayerMask enemyLayer;
-    public float attackRange = .5f;
-    public Transform attackPoint;
     private Vector3 bleedingPoint;
     Vector3 origin;
     Vector3 dir;
@@ -17,9 +15,7 @@ public class PlayerCombat : MonoBehaviour
     public float coolDownTime = 1.1f;
     public GameObject bloodSplash;
 
-    public GameObject enabledCrosshair;
-    public GameObject disabledCrosshair;
-    public Transform enemyPosition;
+    public EnemyAI enemyPosition;
 
     public bool isAttacking;
 
@@ -30,8 +26,6 @@ public class PlayerCombat : MonoBehaviour
 
 
     void Start(){
-    disabledCrosshair.SetActive(false);
-    enabledCrosshair.SetActive(true);
         isAttacking = false;
         isDodging = false;
     }
@@ -75,7 +69,7 @@ public class PlayerCombat : MonoBehaviour
 
                     if (distance <= 1.75f)
                     {
-                        enemyPosition = hit.collider.transform;
+                        enemyPosition = hit.collider.GetComponentInParent<EnemyAI>();
                         bleedingPoint = hit.point;
                         FacePlayerToHit();
 
@@ -126,8 +120,7 @@ public class PlayerCombat : MonoBehaviour
                     {
                         if (weaponSwitching.currentType == WeaponSwitching.WeaponType.Ranged)
                         {
-                            Vector3 closestPoint = hit.collider.ClosestPoint(attackPoint.position);
-                            bleedingPoint = closestPoint;
+                            bleedingPoint = hit.point;
                             Debug.Log("RANGED THROW");
                             GetComponent<PlayerAnimation>().AttackAnimation(0);
                         }
@@ -161,16 +154,7 @@ public void ResetDodge(){
     isDodging = false;
     Debug.Log("Dodge and Dive Reset");
 }
-// void TempAttack(){
-//     if(Input.GetButtonDown("Fire1")){
-//         isAttacking = true;
-//         GetComponent<PlayerAnimation>().HandleRootMotion(true);
-//         GetComponent<PlayerAnimation>().StopMovementAnimations();
-//          GetComponent<CamSwitching>().FilmingwithAttacking();
-//         GetComponent<PlayerAnimation>().AttackAnimation();
-//     }
-//         // isAttacking = false;
-// }
+
 
 
     void FacePlayerToHit(){
@@ -219,35 +203,15 @@ public void ResetDodge(){
             Destroy(splash, 3f);
     }
     public void AttackEvent(){
-       
-            // Collider[] hits = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayer);
-            // foreach(var hit in hits){
-            //     // hit.GetComponent<EnemyAI>().GetHit();
-            //     Vector3 closestPoint = hit.GetComponent<Collider>().ClosestPoint(attackPoint.position);
-            //     GameObject splash = Instantiate(bloodSplash, closestPoint, Quaternion.identity);
-            //     Destroy(splash, 3f);
-            //     GetComponent<AudioManager>().Damage();
-            // }
-                float distance = Vector3.Distance(transform.position, enemyPosition.position);
-                Debug.Log(distance);
+
                 Bleeding();
+                enemyPosition.GetHit();
                 GetComponent<PlayerAnimation>().HandleRootMotion(false);
                 GetComponent<CamSwitching>().FilmingwithoutAttacking();
         
     }
 
-    public void HeavyAttackEvent(){
-            //  bow.SetActive(false);
-            // sword.SetActive(true);
-            Collider[] hits = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayer);
-            foreach(var hit in hits){
-                
-                Vector3 closestPoint = hit.GetComponent<Collider>().ClosestPoint(attackPoint.position);
-                GameObject splash = Instantiate(bloodSplash, closestPoint, Quaternion.identity);
-                Destroy(splash, 3f);
-                hit.GetComponent<EnemyAI>().Fall();
-            }   
-    }
+
           void Dodge(){
             if(Input.GetKeyDown(KeyCode.Tab)){
                 GetComponent<PlayerAnimation>().HandleDodge("Dive");
@@ -257,13 +221,14 @@ public void ResetDodge(){
                 GetComponent<PlayerAnimation>().HandleDodge("Dodge");
                 isDodging  = true;
                 Debug.Log("Dodging");
+            }else if (Input.GetKeyDown(KeyCode.Space)){
+                GetComponent<PlayerAnimation>().HandleJump();
+                isDodging  = true;
+                Debug.Log("Dodging");
             }
+
     }
  
 
-    void OnDrawGizmosSelected(){
-        if (attackPoint == null) return;
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
-    }
+   
 }

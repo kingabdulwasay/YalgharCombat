@@ -4,7 +4,7 @@ public class PlayerMovement : MonoBehaviour
 {
     public float speed = 5f;
     public float mouseSensitivity = 150f;
-    public float jumpForce = 1f;
+    public float jumpForce = 2.5f;
     public float gravity = -9.81f;
 
     public Transform cam;
@@ -69,7 +69,7 @@ public class PlayerMovement : MonoBehaviour
                 yVelocity = -2f;
 
             if (Input.GetButtonDown("Jump")){
-                yVelocity = Mathf.Sqrt(jumpForce * -2f * gravity);
+                yVelocity = Mathf.Sqrt(jumpForce * -3f * gravity);
                 GetComponent<PlayerAnimation>().HandleJump();
 
             }

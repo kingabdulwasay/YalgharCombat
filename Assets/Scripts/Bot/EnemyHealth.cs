@@ -8,7 +8,6 @@ public class EnemyHealth : MonoBehaviour
     public void TakeDamage(float amount)
     {
         currentHealth -= amount;
-        GetComponent<EnemyAI>().GetHit();
         Debug.Log(transform.name  + " 's current health: "+ currentHealth);
     }
 }
