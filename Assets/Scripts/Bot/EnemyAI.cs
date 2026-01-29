@@ -37,7 +37,7 @@ public class EnemyAI : MonoBehaviour
              animator.SetBool("Run", false);
              if(Time.time - lastAttackTime > coolDownTime){
             lastAttackTime = Time.time;
-            animator.SetTrigger("Attack");
+            animator.SetTrigger("Attack"+Random.Range(1,4));
             }
 
         }else if(distance <= detectRange){
