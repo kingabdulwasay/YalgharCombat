@@ -1,7 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
 public class WeaponSwitching : MonoBehaviour
 {
+    PhotonView view;
     int index;
     public RawImage weaponImage;
     public GameObject[] weapons;
@@ -15,6 +17,8 @@ public class WeaponSwitching : MonoBehaviour
     public WeaponType currentType;
     void Start()
     {
+        view = GetComponent<PhotonView>();
+        if(!view.IsMine) return;
         currentType = WeaponType.None;
         foreach (GameObject weapon in weapons) {
         weapon.SetActive(false);
@@ -24,6 +28,7 @@ public class WeaponSwitching : MonoBehaviour
 
     void Update()
     {
+        if(!view.IsMine) return;
         Switching();
     }
 

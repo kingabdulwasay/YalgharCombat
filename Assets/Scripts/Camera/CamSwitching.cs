@@ -1,12 +1,16 @@
 using UnityEngine;
-
+using Photon.Pun;
 public class CamSwitching : MonoBehaviour
 {
    public Camera lookCam;
     Camera combatCam;
     public bool lockRotation;
-    void Start()
-    {
+    PhotonView view;
+
+    void Start(){ 
+    view = GetComponent<PhotonView>();
+    lookCam.GetComponent<AudioListener>().enabled = view.IsMine;
+    if(!view.IsMine) return;
         GameObject camObj = GameObject.FindGameObjectWithTag("CombatCam");
         combatCam = camObj.GetComponent<Camera>();
         combatCam.enabled = false;

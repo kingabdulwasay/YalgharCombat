@@ -1,4 +1,5 @@
 using UnityEngine;
+using Photon.Pun;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -13,9 +14,13 @@ public class PlayerMovement : MonoBehaviour
     float yVelocity;
     CharacterController controller;
     public bool isGrounded;
+    PhotonView view;
+
 
     void Start()
     {
+        view = GetComponent<PhotonView>();
+        if(!view.IsMine) return;
         controller = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -23,6 +28,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        if(!view.IsMine) return;
         HandleMouseLook();
         Vector3 move = HandleMovement();
         HandleJumpAndGravity(ref move);

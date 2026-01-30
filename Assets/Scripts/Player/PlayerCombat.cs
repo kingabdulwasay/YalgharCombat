@@ -1,4 +1,5 @@
 using UnityEngine;
+using Photon.Pun;
 
 public class PlayerCombat : MonoBehaviour
 {
@@ -23,15 +24,20 @@ public class PlayerCombat : MonoBehaviour
 
     public bool isDodging;
 
+    PhotonView view;
+
 
 
     void Start(){
+        view = GetComponent<PhotonView>();
+        if(!view.IsMine) return;
         isAttacking = false;
         isDodging = false;
     }
 
     void Update()
     {
+        if(!view.IsMine) return;
         Attack();
 
         Block();
