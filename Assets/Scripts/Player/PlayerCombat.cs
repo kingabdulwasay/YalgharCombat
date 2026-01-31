@@ -52,6 +52,8 @@ public class PlayerCombat : MonoBehaviour
 
     public void Attack()
     {
+    if (!view.IsMine) return;
+
         if (Input.GetButtonDown("Fire1"))
         {
             Transform cam = GetComponent<PlayerMovement>().cam;
@@ -145,11 +147,14 @@ public class PlayerCombat : MonoBehaviour
 
 
     public void OnKnifeThrow(){
+    if (!view.IsMine) return;
     GetComponent<AudioManager>().ThrowKnife();
     GetComponent<WeaponSwitching>().DisableWeapon();
-}
+    }
 
 public void OnKnifeHit(){
+    if (!view.IsMine) return;
+
     GetComponent<AudioManager>().Cut();
     Bleeding();
     GetComponent<WeaponSwitching>().EnableWeapon();
@@ -157,6 +162,8 @@ public void OnKnifeHit(){
      
 
 public void ResetDodge(){
+    if (!view.IsMine) return;
+
     isDodging = false;
     Debug.Log("Dodge and Dive Reset");
 }
@@ -164,6 +171,8 @@ public void ResetDodge(){
 
 
     void FacePlayerToHit(){
+    if (!view.IsMine) return;
+
         Vector3 direction = hit.point - transform.position;
         direction.y = 0f;
          if (direction != Vector3.zero){
@@ -179,6 +188,8 @@ public void ResetDodge(){
 
 
     void Block(){
+    if (!view.IsMine) return;
+
         if(Input.GetKeyDown(KeyCode.B)){   
             isBlocking = !isBlocking;
         } 
@@ -189,6 +200,8 @@ public void ResetDodge(){
 
     void Crouch()
     {
+    if (!view.IsMine) return;
+
         if (Input.GetKeyDown(KeyCode.C))
         {
             isCrouching = !isCrouching;
@@ -200,15 +213,20 @@ public void ResetDodge(){
     }
 
     public void DisableBlock(){
+    if (!view.IsMine) return;
+
             isBlocking = false;
             Debug.Log("Disabled");
     }
 
     public void Bleeding(){
+    if (!view.IsMine) return;
+
             GameObject splash = Instantiate(bloodSplash, bleedingPoint, Quaternion.identity);
             Destroy(splash, 3f);
     }
     public void AttackEvent(){
+    if (!view.IsMine) return;
 
                 Bleeding();
                 enemyPosition.GetHit();
@@ -219,6 +237,8 @@ public void ResetDodge(){
 
 
           void Dodge(){
+    if (!view.IsMine) return;
+
             if(Input.GetKeyDown(KeyCode.Tab)){
                 GetComponent<PlayerAnimation>().HandleDodge("Dive");
                 isDodging  = true;

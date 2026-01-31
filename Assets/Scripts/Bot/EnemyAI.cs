@@ -1,11 +1,14 @@
 using UnityEngine;
 using UnityEngine.AI;
+using Photon.Pun;
 
 public class EnemyAI : MonoBehaviour
 {
     Transform player;
     NavMeshAgent agent;
     Animator animator;
+
+    public float rotationSpeed = 10f;  
 
     public float detectRange;
     public float attackRange;
@@ -21,7 +24,8 @@ public class EnemyAI : MonoBehaviour
 
     bool isDisable = false;
 
-
+    RaycastHit hit;
+ 
     void Start(){
         player = GameObject.FindGameObjectWithTag("Player").transform;
         agent  = GetComponent<NavMeshAgent>();  
@@ -35,9 +39,11 @@ public class EnemyAI : MonoBehaviour
         if(distance <= attackRange){
             agent.ResetPath();
              animator.SetBool("Run", false);
+           
              if(Time.time - lastAttackTime > coolDownTime){
-            lastAttackTime = Time.time;
-            animator.SetTrigger("Attack"+Random.Range(1,4));
+                lastAttackTime = Time.time;
+                // animator.SetTrigger("Attack"+Random.Range(1,4));
+                Attack();
             }
 
         }else if(distance <= detectRange){
@@ -74,30 +80,47 @@ public class EnemyAI : MonoBehaviour
         animator.SetTrigger("Hit");
     }
 
-    void Attack(){
-        
-           
-            Collider[] hits = Physics.OverlapSphere(attackPoint.position, attackPointRange, playerLayer);
-            foreach(var hit in hits){
-                if(!hit.GetComponent<PlayerCombat>().isDodging){
-                Vector3 closestPoint = hit.GetComponent<Collider>().ClosestPoint(attackPoint.position);
+void Attack()
+{
+    float attackRange = 1.5f;
+    float radius = 0.5f;
 
-                if(hit.GetComponent<PlayerCombat>().isBlocking){
-                    Debug.Log("Blocked");
-                }else{
-                Debug.Log(hit.name);
-                GameObject splash = Instantiate(bloodSplash, closestPoint, Quaternion.identity);
-                Destroy(splash, 3f);
-                hit.GetComponent<PlayerAnimation>().DamageAnimation();
-                hit.GetComponent<AudioManager>().Damage();
-                Debug.Log(hit.GetComponent<PlayerMovement>().isGrounded);
-                }
-                }else{
-                    Debug.Log("Cannot attack");
-                }
-            }
-        
+    Debug.Log("Attack Played");
+    Vector3 origin = attackPoint.position;
+    Vector3 direction = attackPoint.forward;
+    
+    if (Physics.SphereCast(origin, radius, direction,  out hit, attackRange, playerLayer))
+    {
+        FacePlayerToHit();
+
+        Debug.Log(hit.collider.name);
+
+        PhotonView targetPhotonView = hit.collider.GetComponent<PhotonView>();
+        if(targetPhotonView){
+            Debug.Log("Works Fine");
+            // targetPhotonView.RPC("TakeDamage", targetPhotonView.Owner, 10f, hit.point);
+        }
+
+
     }
+}
+
+
+    void FacePlayerToHit(){
+
+
+        Vector3 direction = hit.collider.transform.position - transform.position;
+        direction.y = 0f;
+         if (direction != Vector3.zero){
+                Quaternion targetRotation = Quaternion.LookRotation(direction);
+                transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                targetRotation,
+                rotationSpeed * Time.deltaTime
+            );
+        }
+    }
+
 
         void OnDrawGizmosSelected(){
         Gizmos.color = Color.blue;
