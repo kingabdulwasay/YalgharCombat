@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using Photon.Pun;
 public class CamControl : MonoBehaviour
 {   
      private Transform player;
@@ -47,6 +47,23 @@ public class CamControl : MonoBehaviour
         {
             localPlayer = GameObject.FindWithTag("Player");
             if (localPlayer != null)
+            {
+                player = localPlayer.transform;
+                playerMovement = localPlayer.GetComponent<PlayerMovement>();
+                playerCamSwitching = localPlayer.GetComponent<CamSwitching>();
+
+                cachedCameraRotation = transform.rotation;
+                cachedPlayerRotation = player.rotation;
+            }
+        }
+    }
+
+      void FindRemotePlayer(){
+
+   if (player == null)
+        {
+            localPlayer = GameObject.FindWithTag("Player");
+            if (localPlayer != null && localPlayer.GetComponent<PhotonView>().IsMine)
             {
                 player = localPlayer.transform;
                 playerMovement = localPlayer.GetComponent<PlayerMovement>();

@@ -8,25 +8,33 @@ public class CamSwitching : MonoBehaviour
     PhotonView view;
 
     void Start(){ 
-    view = GetComponent<PhotonView>();
-    lookCam.GetComponent<AudioListener>().enabled = view.IsMine;
-    if(!view.IsMine) return;
-        GameObject camObj = GameObject.FindGameObjectWithTag("CombatCam");
-        combatCam = camObj.GetComponent<Camera>();
-        combatCam.enabled = false;
+        view = GetComponent<PhotonView>();
+        if(view.IsMine){
+        // GameObject camObj = GameObject.FindGameObjectWithTag("CombatCam");
+        // combatCam = camObj.GetComponent<Camera>();
+        // combatCam.enabled = false;
         lookCam.enabled = true;
         lockRotation = false;
+        }else{
+            lookCam.enabled = false;
+            lookCam.GetComponent<AudioListener>().enabled = false;
+        }
     }
 
     public void FilmingwithAttacking(){
-        lockRotation = true;
-        lookCam.enabled = false;
-        combatCam.enabled = true;
+        if(view.IsMine){
+            lockRotation = true;
+            lookCam.enabled = false;
+            combatCam.enabled = true;
+        }
+        
     }
     public void FilmingwithoutAttacking(){
-        combatCam.enabled = false;
-        lookCam.enabled = true;
-        lockRotation = false;
+        if(view.IsMine){
+            combatCam.enabled = false;
+            lookCam.enabled = true;
+            lockRotation = false;
+        }
        
     }
 }

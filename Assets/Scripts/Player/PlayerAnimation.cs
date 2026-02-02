@@ -46,11 +46,7 @@ public class PlayerAnimation : MonoBehaviour
     }
 
     public void HandleDodge(string type){   
-
-            animator.SetTrigger(type);
-
-            EnableRootMotionEvent();
-        
+            animator.SetTrigger(type);        
     }
 
    public void HandleRootMotion(bool flag){
@@ -60,30 +56,22 @@ public class PlayerAnimation : MonoBehaviour
     public void AttackAnimation(double currentAttack){
         switch(currentAttack){
             case 0:
-
             animator.SetTrigger("Throw");
             break;
             case 1.0:
-            // HandleRootMotion(true);
-            // GetComponent<CamSwitching>().FilmingwithAttacking();
+      
             animator.SetTrigger("HeadAttack");
             break;
 
             case 2.0:
-        //    HandleRootMotion(true);
-        //     GetComponent<CamSwitching>().FilmingwithAttacking();
             animator.SetTrigger("HandsAttack");
             break;
 
             case 3.0:
-            // HandleRootMotion(true);
-            // GetComponent<CamSwitching>().FilmingwithAttacking();
             animator.SetTrigger("BellyAttack");
             break;
   
             case 4.0:
-            // HandleRootMotion(true);
-            // GetComponent<CamSwitching>().FilmingwithAttacking();
             animator.SetTrigger("BottomAttack");
             break;
 
@@ -107,9 +95,13 @@ public class PlayerAnimation : MonoBehaviour
         //     animator.SetTrigger("Attack"+currentAttack++);
     }
    
+     public void GreatAttack(){      
+             animator.SetTrigger("GreatSlash");
+    }
+
     public void DisableRootMotionEvent(){
          animator.applyRootMotion = false;
-         GetComponent<CamSwitching>().FilmingwithoutAttacking();
+        //  GetComponent<CamSwitching>().FilmingwithoutAttacking();
     }
 
      public void EnableRootMotionEvent(){

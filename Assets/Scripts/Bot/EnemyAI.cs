@@ -4,7 +4,8 @@ using Photon.Pun;
 
 public class EnemyAI : MonoBehaviour
 {
-    Transform player;
+    Transform targetPlayer;
+
     NavMeshAgent agent;
     Animator animator;
 
@@ -25,15 +26,20 @@ public class EnemyAI : MonoBehaviour
     bool isDisable = false;
 
     RaycastHit hit;
+
+
  
     void Start(){
-        player = GameObject.FindGameObjectWithTag("Player").transform;
         agent  = GetComponent<NavMeshAgent>();  
         animator = GetComponent<Animator>();
     }
 
     void Update(){
-        float distance = Vector3.Distance(transform.position, player.position);
+        if(!PhotonNetwork.IsMasterClient) return;
+        
+        FindClosestPlayer();
+        if(targetPlayer == null) return;
+        float distance = Vector3.Distance(transform.position, targetPlayer.position);
         agent.updateRotation = true;
   
         if(distance <= attackRange){
@@ -57,7 +63,7 @@ public class EnemyAI : MonoBehaviour
 
     void Chase(){
         if(!isDisable){
-        agent.SetDestination(player.position);
+        agent.SetDestination(targetPlayer.position);
         animator.SetBool("Run", true);
         }
     }
@@ -95,11 +101,17 @@ void Attack()
 
         Debug.Log(hit.collider.name);
 
-        PhotonView targetPhotonView = hit.collider.GetComponent<PhotonView>();
-        if(targetPhotonView){
-            Debug.Log("Works Fine");
-            // targetPhotonView.RPC("TakeDamage", targetPhotonView.Owner, 10f, hit.point);
-        }
+        PhotonView targetPV = hit.collider.GetComponent<PhotonView>();
+
+if (targetPV != null)
+{
+    targetPV.RPC(
+        "TakeDamage",
+        targetPV.Owner,   // 🔥 THIS is the key
+        10f
+    );
+}
+
 
 
     }
@@ -133,5 +145,23 @@ void Attack()
         Gizmos.DrawWireSphere(attackPoint.position, attackPointRange);
     }
 
-   
+   void FindClosestPlayer(){
+    GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+
+    float shortestDistance = Mathf.Infinity;
+    Transform nearestPlayer = null;
+
+    foreach (GameObject p in players)
+    {
+        float dist = Vector3.Distance(transform.position, p.transform.position);
+        if (dist < shortestDistance)
+        {
+            shortestDistance = dist;
+            nearestPlayer = p.transform;
+        }
+    }
+
+    targetPlayer = nearestPlayer;
+}
+
 }

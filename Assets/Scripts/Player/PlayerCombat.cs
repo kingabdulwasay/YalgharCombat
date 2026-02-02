@@ -14,9 +14,7 @@ public class PlayerCombat : MonoBehaviour
 
     float lastAttackTime;
     public float coolDownTime = 1.1f;
-    public GameObject bloodSplash;
 
-    public EnemyAI enemyPosition;
 
     public bool isAttacking;
 
@@ -25,7 +23,6 @@ public class PlayerCombat : MonoBehaviour
     public bool isDodging;
 
     PhotonView view;
-
 
 
     void Start(){
@@ -38,6 +35,7 @@ public class PlayerCombat : MonoBehaviour
     void Update()
     {
         if(!view.IsMine) return;
+  
         Attack();
 
         Block();
@@ -46,13 +44,13 @@ public class PlayerCombat : MonoBehaviour
 
         Dodge();
 
-        
+        HeavyAttack();
+
     }
 
 
-    public void Attack()
-    {
-    if (!view.IsMine) return;
+    public void Attack(){
+        if(!view.IsMine) return;
 
         if (Input.GetButtonDown("Fire1"))
         {
@@ -60,78 +58,55 @@ public class PlayerCombat : MonoBehaviour
             origin = cam.position;
             dir = cam.forward;
 
-            WeaponSwitching weaponSwitching = GetComponent<WeaponSwitching>();
 
                 if (Physics.Raycast(origin, dir, out hit, 20f, enemyLayer))
                 {
-                    Debug.Log("===== RAYCAST HIT =====");
-                    Debug.Log("Hit Object Name: " + hit.collider.gameObject.name);
-                    Debug.Log("Hit Transform Name: " + hit.transform.name);
-                    Debug.Log("Hit Root Object: " + hit.transform.root.name);
-                    Debug.Log("Hit Tag: " + hit.collider.tag);
-                    Debug.Log("Hit Layer: " + LayerMask.LayerToName(hit.collider.gameObject.layer));
 
                     float distance = Vector3.Distance(transform.position, hit.point);
                     Debug.Log("Distance: " + distance);
-                    Debug.Log("Weapon Type: " + weaponSwitching.currentType);
 
                     if (distance <= 1.75f)
                     {
-                        enemyPosition = hit.collider.GetComponentInParent<EnemyAI>();
-                        bleedingPoint = hit.point;
                         FacePlayerToHit();
 
-                        if (weaponSwitching.currentType == WeaponSwitching.WeaponType.Meele)
-                        {
+                        
                             hitPart = hit.collider.gameObject.name;
                             Debug.Log("Hit Part Used In Code: " + hitPart);
-                            if (isCrouching)
-                            {
-                                GetComponent<PlayerAnimation>().AttackAnimation(6.0);
-                            }else
-                            {
+                            
                   
 
                                  if (hitPart == "Head")
-                                {
-                                    Debug.Log("HEAD ATTACK");
+                                
                                     GetComponent<PlayerAnimation>().AttackAnimation(1.0);
-                                    hit.collider.GetComponentInParent<EnemyHealth>().TakeDamage(10f);
-                                }
+                                
                                 else if (hitPart == "Belly")
-                                {
-                                    Debug.Log("BELLY ATTACK");
+                                
                                     GetComponent<PlayerAnimation>().AttackAnimation(3.0);
-                                    hit.collider.GetComponentInParent<EnemyHealth>().TakeDamage(5f);
 
-                                }
+                                
                                 else if (hitPart == "Left Leg" || hitPart == "Right Leg")
-                                {
-                                    Debug.Log("LEGS ATTACK");
+                                
                                     GetComponent<PlayerAnimation>().AttackAnimation(4.0);
 
-                                }
-                                else if (hitPart == "Right Hand" || hitPart == "Left Hand")
-                                {
-                                    Debug.Log("HAND ATTACK");
-                                    GetComponent<PlayerAnimation>().AttackAnimation(2.0);
-                                }
-                                else
-                                {
-                                    Debug.Log("NO MATCHING BODY PART FOUND");
-                                }
                                 
-                            }
-                        }
+                                else if (hitPart == "Right Hand" || hitPart == "Left Hand")
+                                
+                                    GetComponent<PlayerAnimation>().AttackAnimation(2.0);
+                                
+                                else
+                                
+                                    Debug.Log("NO MATCHING BODY PART FOUND");
+                                
+                                
+                            
+                        
                     }
                     else
                     {
-                        if (weaponSwitching.currentType == WeaponSwitching.WeaponType.Ranged)
-                        {
-                            bleedingPoint = hit.point;
+                        
                             Debug.Log("RANGED THROW");
                             GetComponent<PlayerAnimation>().AttackAnimation(0);
-                        }
+                        
                     }
                 }
                 else
@@ -143,35 +118,44 @@ public class PlayerCombat : MonoBehaviour
     }
 
 
+public void HeavyAttack(){
+        if(!view.IsMine) return;
+
+    if(Input.GetButtonDown("Fire2")){
+        PlayerAnimation animations = GetComponent<PlayerAnimation>();
+        animations.EnableRootMotionEvent();
+        animations.GreatAttack();
+    }
+}
 
 
 
-    public void OnKnifeThrow(){
-    if (!view.IsMine) return;
+public void OnThrow(){
+        if(!view.IsMine) return;
+
     GetComponent<AudioManager>().ThrowKnife();
     GetComponent<WeaponSwitching>().DisableWeapon();
-    }
+}
 
-public void OnKnifeHit(){
-    if (!view.IsMine) return;
+public void OnHit(){
+        if(!view.IsMine) return;
 
     GetComponent<AudioManager>().Cut();
-    Bleeding();
     GetComponent<WeaponSwitching>().EnableWeapon();
 }
      
 
 public void ResetDodge(){
-    if (!view.IsMine) return;
+        if(!view.IsMine) return;
 
     isDodging = false;
     Debug.Log("Dodge and Dive Reset");
+    PlayerAnimation animations = GetComponent<PlayerAnimation>();
+    animations.DisableRootMotionEvent();
 }
 
-
-
     void FacePlayerToHit(){
-    if (!view.IsMine) return;
+        if(!view.IsMine) return;
 
         Vector3 direction = hit.point - transform.position;
         direction.y = 0f;
@@ -185,10 +169,8 @@ public void ResetDodge(){
         }
     }
 
-
-
     void Block(){
-    if (!view.IsMine) return;
+        if(!view.IsMine) return;
 
         if(Input.GetKeyDown(KeyCode.B)){   
             isBlocking = !isBlocking;
@@ -198,9 +180,8 @@ public void ResetDodge(){
         }
     }
 
-    void Crouch()
-    {
-    if (!view.IsMine) return;
+    void Crouch(){
+        if(!view.IsMine) return;
 
         if (Input.GetKeyDown(KeyCode.C))
         {
@@ -213,37 +194,46 @@ public void ResetDodge(){
     }
 
     public void DisableBlock(){
-    if (!view.IsMine) return;
+        if(!view.IsMine) return;
 
             isBlocking = false;
             Debug.Log("Disabled");
     }
 
-    public void Bleeding(){
+  
+
+public void AttackEvent()
+{
     if (!view.IsMine) return;
 
-            GameObject splash = Instantiate(bloodSplash, bleedingPoint, Quaternion.identity);
-            Destroy(splash, 3f);
-    }
-    public void AttackEvent(){
-    if (!view.IsMine) return;
+    PhotonView target = hit.collider.GetComponentInParent<PhotonView>();
+    if (target == null) return;
 
-                Bleeding();
-                enemyPosition.GetHit();
-                GetComponent<PlayerAnimation>().HandleRootMotion(false);
-                GetComponent<CamSwitching>().FilmingwithoutAttacking();
-        
-    }
+    Debug.Log("I am " + view.ViewID + "and hit: " + target.ViewID);
+    // view.RPC(
+    //     "TakeDamage",
+    //     target.Owner,
+    //     10f,
+    //     hit.point,
+    //     hitPart
+    // );
+}
 
 
-          void Dodge(){
-    if (!view.IsMine) return;
+
+
+    void Dodge(){
+        if(!view.IsMine) return;
 
             if(Input.GetKeyDown(KeyCode.Tab)){
+                PlayerAnimation animations = GetComponent<PlayerAnimation>();
+                animations.EnableRootMotionEvent();
                 GetComponent<PlayerAnimation>().HandleDodge("Dive");
                 isDodging  = true;
                 Debug.Log("Diving");
             }else if (Input.GetKeyDown(KeyCode.Z)){
+                  PlayerAnimation animations = GetComponent<PlayerAnimation>();
+                animations.EnableRootMotionEvent();
                 GetComponent<PlayerAnimation>().HandleDodge("Dodge");
                 isDodging  = true;
                 Debug.Log("Dodging");

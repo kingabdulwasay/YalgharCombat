@@ -14,8 +14,8 @@ public class PlayerMovement : MonoBehaviour
     float yVelocity;
     CharacterController controller;
     public bool isGrounded;
-    PhotonView view;
 
+    PhotonView view;
 
     void Start()
     {
@@ -43,6 +43,7 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleMouseLook()
     {
+
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
@@ -55,6 +56,7 @@ public class PlayerMovement : MonoBehaviour
 
     public Vector3 HandleMovement()
     {
+
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
@@ -69,6 +71,8 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleJumpAndGravity(ref Vector3 move)
     {
+        if(!view.IsMine) return;
+
         if (controller.isGrounded)
         {
             if (yVelocity < 0)
